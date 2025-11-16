@@ -25,10 +25,40 @@ fun Route.taskRoutes() {
 
     post("/tasks") {
         val title = call.receiveParameters()["title"].orEmpty().trim()
-        if (title.isNotBlank()) {
-            TaskRepository.add(title)
+
+        // Validation
+        if (title.isBlank()) {
+            if (call.isHtmx()) {
+                val error = """<div id="status" hx-swap-oob="true" role="alert" aria-live="assertive">
+                    Title is required. Please enter at least one character.
+                </div>"""
+                return@post call.respondText(error, ContentType.Text.Html, HttpStatusCode.BadRequest)
+            } else {
+                // No-JS path: redirect with error flag (handle in GET if needed)
+                return@post call.respondRedirect("/tasks?error=required")
+            }
         }
-        call.respondRedirect("/tasks") // PRG pattern
+
+        val task = TaskRepository.add(title)
+
+        if (call.isHtmx()) {
+            // Return HTML fragment for new task
+            val fragment = """<li id="task-${task.id}">
+                <span>${task.title}</span>
+                <form action="/tasks/${task.id}/delete" method="post" style="display: inline;"
+                    hx-post="/tasks/${task.id}/delete"
+                    hx-target="#task-${task.id}"
+                    hx-swap="outerHTML">
+                  <button type="submit" aria-label="Delete task: ${task.title}">Delete</button>
+                </form>
+            </li>"""
+
+            val status = """<div id="status" hx-swap-oob="true">Task "${task.title}" added successfully.</div>"""
+
+            return@post call.respondText(fragment + status, ContentType.Text.Html, HttpStatusCode.Created)
+        }
+
+        call.respondRedirect("/tasks") // No-JS fallback
     }
 
     post("/tasks/{id}/delete") {
@@ -37,3 +67,7 @@ fun Route.taskRoutes() {
         call.respondRedirect("/tasks") // PRG pattern
     }
 }
+
+fun ApplicationCall.isHtmx(): Boolean =
+    request.headers["HX-Request"]?.equals("true", ignoreCase = true) == true
+
