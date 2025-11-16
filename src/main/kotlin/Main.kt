@@ -207,14 +207,6 @@ fun Application.configureSessions() {
  */
 fun Application.configureRouting() {
     routing {
-        // Static files (CSS, JS, HTMX library)
-        staticResources("/static", "static")
-
-        // Health check endpoint (for monitoring)
-        configureHealthCheck()
-
-        // Task management routes (main feature)
-        // TODO: Week 6 Lab 1 - Implement taskRoutes()
         taskRoutes()
     }
 }
