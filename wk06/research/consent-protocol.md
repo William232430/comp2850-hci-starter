@@ -2,8 +2,8 @@
 
 **Module**: COMP2850 Human-Computer Interaction
 **Activity**: Low-risk needs-finding (peer interviews)
-**Date**: [YYYY-MM-DD]
-**Researcher**: [Your Name/Student ID]
+**Date**: [2025-08-01]
+**Researcher**: [Mingyuan_Xing/201819857]
 
 ---
 
