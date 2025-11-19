@@ -19,7 +19,7 @@ fun Route.taskRoutes() {
             "editingId" to null,
             "errorMessage" to null
         )
-        val template = pebble.getTemplate("templates/tasks/index.peb")
+        val template = pebble.getTemplate("tasks/index.peb")
         val writer = StringWriter()
         template.evaluate(writer, model)
         call.respondText(writer.toString(), ContentType.Text.Html)
