@@ -1,11 +1,14 @@
-{% extends "../base.peb" %}
+{% extends "base.peb" %}
 
 {% block content %}
 <h1>Tasks</h1>
 
 <section aria-labelledby="add-heading">
   <h2 id="add-heading">Add a new task</h2>
-  <form action="/tasks" method="post">
+  <form action="/tasks" method="post"
+        hx-post="/tasks"
+        hx-target="#task-list"
+        hx-swap="beforeend">
     <label for="title">Title</label>
     <input type="text" id="title" name="title" required
            placeholder="e.g., Buy milk" aria-describedby="title-hint">
@@ -23,11 +26,9 @@
       {% else %}
         {% include "tasks/_item.peb" with {"task": task} %}
       {% endif %}
-    {% else %}
+    {% empty %}
       <li>No tasks yet. Add one above!</li>
     {% endfor %}
   </ul>
 </section>
-
-<div id="status" aria-live="polite"></div>
 {% endblock %}
