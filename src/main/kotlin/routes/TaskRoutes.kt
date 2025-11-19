@@ -15,7 +15,9 @@ fun Route.taskRoutes() {
     get("/tasks") {
         val model = mapOf(
             "title" to "Tasks",
-            "tasks" to TaskRepository.all()
+            "tasks" to TaskRepository.all(),
+            "editingId" to null,
+            "errorMessage" to null
         )
         val template = pebble.getTemplate("templates/tasks/index.peb")
         val writer = StringWriter()
@@ -79,7 +81,7 @@ fun Route.taskRoutes() {
 
         if (call.isHtmx()) {
             // HTMX path: return edit fragment
-            val template = pebble.getTemplate("templates/tasks/_edit.peb")
+            val template = pebble.getTemplate("tasks/_edit.peb")
             val model = mapOf("task" to task, "error" to null)
             val writer = StringWriter()
             template.evaluate(writer, model)
@@ -109,7 +111,7 @@ fun Route.taskRoutes() {
         if (newTitle.isBlank()) {
             if (call.isHtmx()) {
                 // HTMX path: return edit fragment with error
-                val template = pebble.getTemplate("templates/tasks/_edit.peb")
+                val template = pebble.getTemplate("tasks/_edit.peb")
                 val model = mapOf(
                     "task" to task,
                     "error" to "Title is required. Please enter at least one character."
